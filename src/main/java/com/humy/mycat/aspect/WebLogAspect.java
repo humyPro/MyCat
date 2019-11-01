@@ -46,10 +46,10 @@ public class WebLogAspect {
         Object object = null;
         try {
             object = point.proceed();
-            log.info("\r\n\"success\":{}", new LogValue(name, point.getArgs(), object, null));
+            log.info("\r\n{\"success\":{}}", new LogValue(name, point.getArgs(), object));
             return object;
         } catch (Throwable throwable) {
-            log.error("\r\n\"error:{}\"", new LogValue(name, point.getArgs(), object, throwable));
+            log.error("\r\n{\"error\":{}}", new LogValue(name, point.getArgs(), object), throwable);
             throw throwable;
         }
     }
@@ -63,8 +63,6 @@ public class WebLogAspect {
         private Object paramIn;
 
         private Object paramOut;
-
-        private Throwable exception;
 
         @Override
         public String toString() {
