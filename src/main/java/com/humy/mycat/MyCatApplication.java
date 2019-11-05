@@ -7,6 +7,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class MyCatApplication {
 
     public static void main(String[] args) {
+        //
+        // ystem.setProperty("log4j2.contextSelector","org.apache.logging.log4j.core.async.AsyncLoggerContextSelector");
         SpringApplication.run(MyCatApplication.class, args);
     }
 

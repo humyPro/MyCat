@@ -1,6 +1,7 @@
 package com.humy.mycat.aspect;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +25,7 @@ public class WebLogAspect {
     public void controllerLog() {
     }//签名，可以理解成这个切入点的一个名称
 
-    @Pointcut("@within(com.humy.mycat.aspect.Logger)")
+    @Pointcut("@within(com.humy.mycat.annotation.Logging)")
     public void logAnnotation() {
     }
 
@@ -66,7 +67,7 @@ public class WebLogAspect {
 
         @Override
         public String toString() {
-            return JSON.toJSONString(this);
+            return JSON.toJSONString(this, SerializerFeature.IgnoreErrorGetter);
         }
     }
 }

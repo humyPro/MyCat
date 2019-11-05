@@ -1,7 +1,8 @@
 package com.humy.mycat.repository;
 
+import com.humy.mycat.constant.RepositoryConstant;
 import com.humy.mycat.entity.Cat;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.hibernate.annotations.Where;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Repository;
  * @Description:
  */
 @Repository
-public interface CatRepository extends JpaRepository<Cat, Long> {
+@Where(clause = RepositoryConstant.DELETED_COLUMN_NAME + "= 0")
+public interface CatRepository extends SoftDeleteRepository<Cat, Long> {
 
 }

@@ -13,6 +13,8 @@ spring:
   jpa:
     properties:
       hibernate:
+        session_factory:
+          interceptor: com.humy.mycat.interceptor.JpaInterceptor
         hbm2ddl:
           #auto: create
           auto: update
@@ -36,4 +38,4 @@ spring:
 
 
 logging:
-  config: classpath:log4j2-spring.yml
+  config: classpath:log4j2-spring.xml

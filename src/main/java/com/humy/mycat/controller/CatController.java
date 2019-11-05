@@ -1,7 +1,7 @@
 package com.humy.mycat.controller;
 
+import com.humy.mycat.annotation.Logging;
 import com.humy.mycat.appconfig.AppConfig;
-import com.humy.mycat.aspect.Logger;
 import com.humy.mycat.dto.out.Result;
 import com.humy.mycat.entity.Cat;
 import com.humy.mycat.service.CatService;
@@ -15,8 +15,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletResponse;
-
 /**
  * @Author: Milo Hu
  * @Date: 10/16/2019 16:28
@@ -24,7 +22,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 @RestController
 @RequestMapping("/cat")
-@Logger
+@Logging
 public class CatController {
 
     private CatService catService;
@@ -50,7 +48,7 @@ public class CatController {
     }
 
     @GetMapping("/list")
-    public Result<Page<Cat>> listCat(@RequestParam(required = false, defaultValue = "0") Integer page, @RequestParam(required = false, defaultValue = "0") Integer size, HttpServletResponse response) {
+    public Result<Page<Cat>> listCat(@RequestParam(required = false, defaultValue = "0") Integer page, @RequestParam(required = false, defaultValue = "0") Integer size) {
         int maxPageSize = appConfig.getMaxPageSize();
         size = size > maxPageSize || size < 1 ? maxPageSize : size;
         page = page < 0 ? 0 : page;
@@ -59,8 +57,8 @@ public class CatController {
     }
 
     @DeleteMapping("/{id}")
-    public Boolean deleteCat(@PathVariable Long id) {
+    public Result<Boolean> deleteCat(@PathVariable Long id) {
         Boolean res = catService.deleteCatById(id);
-        return res;
+        return Result.success(res);
     }
 }
