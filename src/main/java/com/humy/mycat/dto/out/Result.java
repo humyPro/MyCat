@@ -12,6 +12,8 @@ public class Result<T> {
 
     public static final int SUCCESS = 200;
 
+    public static final int BAD_REQUEST = 400;
+
     public static final int SERVER_ERROR = 500;
 
     public static final int FAILED = 0;
@@ -33,6 +35,13 @@ public class Result<T> {
         Result<T> result = new Result<>();
         result.setData(null);
         result.setCode(SERVER_ERROR);
+        return result;
+    }
+
+    public static <T> Result<T> failed(String msg) {
+        Result<T> result = new Result<>();
+        result.setCode(BAD_REQUEST);
+        result.setErrMsg(msg);
         return result;
     }
 }

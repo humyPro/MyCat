@@ -3,6 +3,7 @@ package com.humy.mycat.entity;
 import com.humy.mycat.constant.Gender;
 import com.humy.mycat.constant.RepositoryConstant;
 import lombok.Data;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLDeleteAll;
 import org.hibernate.annotations.Where;
@@ -10,8 +11,6 @@ import org.hibernate.annotations.Where;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.validation.constraints.NotNull;
-import java.io.Serializable;
 
 /**
  * @Author: Milo Hu
@@ -22,13 +21,12 @@ import java.io.Serializable;
 @Entity(name = "cat")
 @SQLDelete(sql = "update #{#entityName} e set e." + RepositoryConstant.DELETED_COLUMN_NAME + "= 1")
 @SQLDeleteAll(sql = "update #{#entityName} e set e." + RepositoryConstant.DELETED_COLUMN_NAME + "= 1")
-@Where(clause = RepositoryConstant.DELETED_COLUMN_NAME + "= 0")
-public class Cat extends BaseEntity implements Serializable {
+@Where(clause = RepositoryConstant.DELETED_COLUMN_NAME + " = 0")
+@DynamicUpdate
+public class Cat extends BaseEntity {
 
-    @NotNull
     private String name;
 
-    @NotNull
     @Enumerated(EnumType.ORDINAL)
     private Gender gender;
 

@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
+import java.util.HashSet;
 
 /**
  * @Author: Milo Hu
@@ -18,6 +19,7 @@ public class MyTest {
 
     @Test
     public void f1() {
+        X.f1();
         Cat cat = new Cat();
         cat.setBirthDay(LocalDateTime.now().minus(2, ChronoUnit.MONTHS).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
         Age age = cat.getAge();
@@ -30,7 +32,21 @@ public class MyTest {
     }
 
     @Test
+    public void f32() {
+
+    }
+
+    @Test
     public void f2() throws IOException {
+    }
+
+    public static void main(String[] args) {
+        HashSet<String> s = new HashSet<>();
+        s.add("111");
+        Object[] objects = s.toArray();
+        String[] strings = new String[3];
+        s.toArray(strings);
+        System.out.println("end");
     }
 
 }

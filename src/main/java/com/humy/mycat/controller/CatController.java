@@ -5,11 +5,13 @@ import com.humy.mycat.appconfig.AppConfig;
 import com.humy.mycat.dto.out.Result;
 import com.humy.mycat.entity.Cat;
 import com.humy.mycat.service.CatService;
+import io.swagger.annotations.Api;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -23,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/cat")
 @Logging
+@Api("curd cat")
 public class CatController {
 
     private CatService catService;
@@ -60,5 +63,17 @@ public class CatController {
     public Result<Boolean> deleteCat(@PathVariable Long id) {
         Boolean res = catService.deleteCatById(id);
         return Result.success(res);
+    }
+
+    @PutMapping()
+    public Result<Cat> updateCat(@RequestBody Cat cat) {
+        if (cat == null || cat.getId() == null) {
+            return Result.failed("");
+        }
+        Cat rCat = catService.updateCat(cat);
+        if (rCat == null) {
+            return Result.failed("更新失败");
+        }
+        return Result.success(rCat);
     }
 }

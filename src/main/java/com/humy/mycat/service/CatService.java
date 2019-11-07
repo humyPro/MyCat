@@ -16,5 +16,7 @@ public interface CatService {
 
     Page<Cat> listCat(int page, int size);
 
-    Boolean deleteCatById(Long id);
+    boolean deleteCatById(Long id);
+
+    Cat updateCat(Cat cat);
 }
