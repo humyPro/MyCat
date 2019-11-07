@@ -18,6 +18,8 @@ public class Result<T> {
 
     public static final int FAILED = 0;
 
+    public static final int UNAUTHORIZED = 401;
+
     private int code;
 
     private String errMsg;
@@ -25,22 +27,25 @@ public class Result<T> {
     private T data;
 
     public static <T> Result<T> success(T data) {
-        Result<T> result = new Result<>();
-        result.setData(data);
-        result.setCode(SUCCESS);
-        return result;
+        return getInstance(SUCCESS, data, null);
     }
 
     public static <T> Result<T> serverError() {
-        Result<T> result = new Result<>();
-        result.setData(null);
-        result.setCode(SERVER_ERROR);
-        return result;
+        return getInstance(SERVER_ERROR, null, null);
     }
 
     public static <T> Result<T> failed(String msg) {
+        return getInstance(BAD_REQUEST, null, msg);
+    }
+
+    public static <T> Result<T> unauthorized(String msg) {
+        return getInstance(UNAUTHORIZED, null, null);
+    }
+
+    public static <T> Result<T> getInstance(int code, T data, String msg) {
         Result<T> result = new Result<>();
-        result.setCode(BAD_REQUEST);
+        result.setCode(code);
+        result.setData(data);
         result.setErrMsg(msg);
         return result;
     }

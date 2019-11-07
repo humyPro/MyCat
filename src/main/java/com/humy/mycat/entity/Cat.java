@@ -18,7 +18,7 @@ import javax.persistence.Enumerated;
  * @Description:
  */
 @Data
-@Entity(name = "cat")
+@Entity
 @SQLDelete(sql = "update #{#entityName} e set e." + RepositoryConstant.DELETED_COLUMN_NAME + "= 1")
 @SQLDeleteAll(sql = "update #{#entityName} e set e." + RepositoryConstant.DELETED_COLUMN_NAME + "= 1")
 @Where(clause = RepositoryConstant.DELETED_COLUMN_NAME + " = 0")

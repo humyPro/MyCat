@@ -23,9 +23,9 @@ public class CatServiceImpl implements CatService {
 
     private CatRepository catRepository;
 
-    private RedisUtil<Cat> redis;
+    private RedisUtil redis;
 
-    public CatServiceImpl(CatRepository catRepository, RedisUtil<Cat> redis) {
+    public CatServiceImpl(CatRepository catRepository, RedisUtil redis) {
         this.catRepository = catRepository;
         this.redis = redis;
     }
@@ -39,7 +39,7 @@ public class CatServiceImpl implements CatService {
 
     @Override
     public Cat getCatById(Long id) {
-        Cat cat = redis.getValue(RedisUtil.CAT_PREFIX + id);
+        Cat cat = redis.getValue(RedisUtil.CAT_PREFIX + id, Cat.class);
         if (cat == null) {
             Optional<Cat> byId = catRepository.findById(id);
             Cat cat_from_db = byId.orElse(null);
