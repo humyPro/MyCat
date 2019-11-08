@@ -1,15 +1,15 @@
 package com.humy.mycat;
 
-import com.alibaba.fastjson.JSON;
 import com.humy.mycat.entity.Cat;
 import com.humy.mycat.vo.Age;
 import org.junit.Test;
-import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * @Author: Milo Hu
@@ -52,13 +52,17 @@ public class MyTest {
     }
 
     public static void main(String[] args) {
-        Jackson2JsonRedisSerializer jack = new Jackson2JsonRedisSerializer(Object.class);
-        byte[] bytes = jack.serialize(new Cat());
-        Object deserialize = jack.deserialize(bytes);
-        System.out.println(new String(bytes));
-        Cat cat = new Cat();
-        cat.setId(1111L);
-        System.out.println(JSON.toJSONString(cat));
+        ArrayList<String> list = new ArrayList<>();
+        list.add("");
+        list.add("123123");
+        Iterator<String> iterator = list.iterator();
+        while (iterator.hasNext()) {
+            String next = iterator.next();
+            if (next.equals("")) {
+                iterator.remove();
+            }
+        }
+        System.out.println(list);
 
     }
 

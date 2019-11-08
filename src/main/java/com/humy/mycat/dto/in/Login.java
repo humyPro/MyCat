@@ -20,4 +20,8 @@ public class Login {
 
     private String newPassword;
 
+    private String address;
+
+    private String userAgent;
+
 }

@@ -25,18 +25,18 @@ public interface SoftDeleteRepository<T, ID> extends JpaRepository<T, ID> {
     @Override
     <S extends T> S save(S entity);
 
-    @Query("select e from #{#entityName} e where e.id=?1 and e." + RepositoryConstant.DELETED_COLUMN_NAME + " = 1")
+    @Query("select e from #{#entityName} e where e.id=?1 and e." + RepositoryConstant.NOT_DELETED_SQL)
     Optional<T> softFindById(ID id);
 
     @Override
     boolean existsById(ID id);
 
     @Override
-    @Query("select count(e) from #{#entityName} e where e." + RepositoryConstant.DELETED_COLUMN_NAME + " = 1")
+    @Query("select count(e) from #{#entityName} e where e." + RepositoryConstant.NOT_DELETED_SQL)
     long count();
 
     @Override
-    @Query(value = "update #{#entityName} e set e." + RepositoryConstant.DELETED_COLUMN_NAME + " = 1 where e.id = ?1 ")
+    @Query(value = "update #{#entityName} e set e." + RepositoryConstant.DELETE_SQL + " where e.id = ?1")
     @Modifying
     @Transactional
     void deleteById(ID id);

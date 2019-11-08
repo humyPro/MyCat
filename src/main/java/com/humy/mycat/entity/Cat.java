@@ -19,9 +19,9 @@ import javax.persistence.Enumerated;
  */
 @Data
 @Entity
-@SQLDelete(sql = "update #{#entityName} e set e." + RepositoryConstant.DELETED_COLUMN_NAME + "= 1")
-@SQLDeleteAll(sql = "update #{#entityName} e set e." + RepositoryConstant.DELETED_COLUMN_NAME + "= 1")
-@Where(clause = RepositoryConstant.DELETED_COLUMN_NAME + " = 0")
+@SQLDelete(sql = "update #{#entityName} e set e." + RepositoryConstant.DELETE_SQL)
+@SQLDeleteAll(sql = "update #{#entityName} e set e." + RepositoryConstant.DELETE_SQL)
+@Where(clause = RepositoryConstant.NOT_DELETED_SQL)
 @DynamicUpdate
 public class Cat extends BaseEntity {
 

@@ -9,6 +9,10 @@ public class RepositoryConstant {
 
     public static final String CAT_TABLE_NAME = "cat";
 
-    public static final String DELETED_COLUMN_NAME = "deleted";
+    public static final String DELETED_COLUMN_NAME = "deleted ";
+
+    public static final String NOT_DELETED_SQL = "deleted = 0 ";
+
+    public static final String DELETE_SQL = "deleted = 1 ";
 
 }

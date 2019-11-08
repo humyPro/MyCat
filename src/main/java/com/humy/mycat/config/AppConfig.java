@@ -1,4 +1,4 @@
-package com.humy.mycat.appconfig;
+package com.humy.mycat.config;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -21,5 +21,7 @@ public class AppConfig {
     private int pageNum = 0;
 
     private int maxPageSize = 50;
+
+    private int maxDeviceNum = 6;
 
 }

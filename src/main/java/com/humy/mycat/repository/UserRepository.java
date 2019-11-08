@@ -1,6 +1,6 @@
 package com.humy.mycat.repository;
 
-import com.humy.mycat.dto.in.Login;
+import com.humy.mycat.constant.RepositoryConstant;
 import com.humy.mycat.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -19,8 +19,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     User findUserByTelNumberAndPassword(String telNumber, String password);
 
-    @Query("update #{#entityName} e set e.passwprd = #{login.newPassword} where e.id= #{login.userId} and e.password=#{login.password}")
     @Transactional
     @Modifying
-    int changePassword(Login login);
+    @Query("update User e set e.password = ?3 where e.id= ?1 and e.password=?2 and e." + RepositoryConstant.NOT_DELETED_SQL)
+    int changePassword(Long userId, String oldPwd, String newPwd);
 }

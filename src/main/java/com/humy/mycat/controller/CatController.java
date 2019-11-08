@@ -1,7 +1,7 @@
 package com.humy.mycat.controller;
 
 import com.humy.mycat.annotation.Logging;
-import com.humy.mycat.appconfig.AppConfig;
+import com.humy.mycat.config.AppConfig;
 import com.humy.mycat.dto.out.Result;
 import com.humy.mycat.entity.Cat;
 import com.humy.mycat.service.CatService;
