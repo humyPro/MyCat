@@ -57,7 +57,7 @@ public class UserServiceImpl implements UserService {
             redis.setValue(RedisUtil.USER_PREFIX + id, user);
             return user;
         }
-        return null;
+        return redis_user;
     }
 
     /**

@@ -1,18 +1,24 @@
 package com.humy.mycat.interceptor.auth;
 
+import com.humy.mycat.annotation.CurrentUser;
 import com.humy.mycat.constant.Header;
+import com.humy.mycat.entity.User;
+import com.humy.mycat.service.UserService;
 import com.humy.mycat.util.RedisUtil;
 import com.humy.mycat.vo.Device;
 import com.humy.mycat.vo.Token;
 import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.lang.annotation.AnnotationTypeMismatchException;
 import java.util.List;
 
 /**
@@ -27,6 +33,9 @@ public class AuthInterceptor implements HandlerInterceptor {
 
     @Autowired
     private RedisUtil redis;
+
+    @Autowired
+    private UserService userService;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -49,7 +58,8 @@ public class AuthInterceptor implements HandlerInterceptor {
         Token token = redis.getToken(id);
 
         if (token == null) {
-
+            response.setStatus(HttpStatus.UNAUTHORIZED.value());
+            return false;
         }
 
         List<Device> devices = token.getDevices();
@@ -57,11 +67,37 @@ public class AuthInterceptor implements HandlerInterceptor {
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
             return false;
         }
+        boolean flag = false;
         for (Device device : devices) {
             if (deviceId.equals(device.getDeviceId())) {
-                return true;
+                flag = true;
+                break;
             }
         }
+
+        if (flag) {
+            //inject user
+            HandlerMethod method = (HandlerMethod) handler;
+            MethodParameter[] ps = method.getMethodParameters();
+            if (ps != null && ps.length != 0) {
+                for (MethodParameter p : ps) {
+                    Class<?> type = p.getParameterType();
+                    if (type.isAssignableFrom(User.class)) {
+                        CurrentUser currentUser = p.getParameterAnnotation(CurrentUser.class);
+                        if (currentUser == null) {
+                            throw new AnnotationTypeMismatchException(method.getMethod(), "null");
+                        }
+                        Long userId = token.getUserId();
+                        if (userId == null) continue;
+                        User byId = userService.getUserById(userId);
+                        request.setAttribute(currentUser.value(), byId);
+                    }
+
+                }
+            }
+            return true;
+        }
+
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
         return false;
     }

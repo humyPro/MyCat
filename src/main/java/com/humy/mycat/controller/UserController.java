@@ -1,5 +1,6 @@
 package com.humy.mycat.controller;
 
+import com.humy.mycat.annotation.CurrentUser;
 import com.humy.mycat.constant.Header;
 import com.humy.mycat.dto.in.Login;
 import com.humy.mycat.dto.in.Logout;
@@ -90,5 +91,20 @@ public class UserController {
             userService.logout(login.getUserId(), deviceId);
         }
         return Result.success(ok);
+    }
+
+    @GetMapping("refresh")
+    public Result<ClientToken> refreshToken(@CurrentUser("refreshToken") User user, HttpServletRequest request) {
+        if (user == null) {
+            return Result.unauthorized("");
+        }
+        String userAgent = request.getHeader(Header.USER_AGENT);
+        Login login = new Login();
+        login.setUserAgent(userAgent);
+        ClientToken token = userService.login(user, login);
+        if (token == null) {
+            return Result.unauthorized(EMPTY_ACCOUNT_PWD);
+        }
+        return Result.success(token);
     }
 }
