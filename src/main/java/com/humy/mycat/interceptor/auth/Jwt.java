@@ -11,7 +11,6 @@ import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Objects;
 
 /**
@@ -41,9 +40,8 @@ public class Jwt {
      */
     public static String createJWT(Long userId) {
         Objects.requireNonNull(userId);
-        HashMap<String, Object> claims = new HashMap<>(2);
         Key key = getKey();
-        JwtBuilder builder = Jwts.builder().setClaims(claims).setSubject(userId.toString()).signWith(key).setIssuedAt(new Date());
+        JwtBuilder builder = Jwts.builder().setSubject(userId.toString()).signWith(key).setIssuedAt(new Date());
         return builder.compact();
     }
 
