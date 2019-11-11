@@ -65,7 +65,7 @@ public class UserController {
         if (user == null) {
             log.info(MarkerFactory.getMarker("loginInfo"), "longin failed:{}", login);
         }
-        ClientToken token = userService.login(user, login);
+        ClientToken token = userService.login(user, userAgent);
         if (token == null) {
             return Result.unauthorized(EMPTY_ACCOUNT_PWD);
         }
@@ -82,14 +82,11 @@ public class UserController {
     }
 
     @PutMapping("pwd")
-    public Result<Boolean> changePassword(Login login, @RequestHeader(Header.DEVICE_ID) String deviceId) {
+    public Result<Boolean> changePassword(@RequestBody Login login, @RequestHeader(Header.DEVICE_ID) String deviceId) {
         if (login.getUserId() == null || login.getPassword() == null || login.getNewPassword() == null) {
             return Result.failed(StringUtils.EMPTY);
         }
         boolean ok = userService.changePassword(login);
-        if (ok) {
-            userService.logout(login.getUserId(), deviceId);
-        }
         return Result.success(ok);
     }
 
@@ -99,9 +96,10 @@ public class UserController {
             return Result.unauthorized("");
         }
         String userAgent = request.getHeader(Header.USER_AGENT);
+        String deviceId = request.getHeader(Header.DEVICE_ID);
         Login login = new Login();
         login.setUserAgent(userAgent);
-        ClientToken token = userService.login(user, login);
+        ClientToken token = userService.refreshToken(user, deviceId, userAgent);
         if (token == null) {
             return Result.unauthorized(EMPTY_ACCOUNT_PWD);
         }

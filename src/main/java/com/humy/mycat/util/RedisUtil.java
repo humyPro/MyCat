@@ -27,13 +27,13 @@ public class RedisUtil {
 
     public ValueOperations<String, String> redis;
 
-    private DefaultRedisScript<Integer> getDelScript;
+    private DefaultRedisScript<Long> getDelScript;
 
     public RedisUtil(StringRedisTemplate StringRedisTemplate) {
         this.stringRedisTemplate = StringRedisTemplate;
         redis = this.stringRedisTemplate.opsForValue();
-        DefaultRedisScript<Integer> script = new DefaultRedisScript<>();
-        script.setResultType(Integer.class);
+        DefaultRedisScript<Long> script = new DefaultRedisScript<>();
+        script.setResultType(Long.class);
         script.setScriptText("if redis.call('get', KEYS[1]) == ARGV[1] then return redis.call('del', KEYS[1]) else return 0 end");
         this.getDelScript = script;
 
@@ -179,8 +179,8 @@ public class RedisUtil {
     public boolean unlock(String prefix, String key, String value) {
         try {
             String realKey = prefix + key;
-            Integer res = stringRedisTemplate.execute(getDelScript, Collections.singletonList(realKey), value);
-            if (res != null && res == 1) {
+            Long res = stringRedisTemplate.execute(getDelScript, Collections.singletonList(realKey), value);
+            if (res != null && res.equals(1L)) {
                 return true;
             }
         } catch (Exception ex) {

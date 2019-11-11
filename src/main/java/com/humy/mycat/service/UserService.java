@@ -15,11 +15,13 @@ public interface UserService {
 
     User getUserById(Long Id);
 
-    ClientToken login(User user, Login login);
+    ClientToken login(User user, String agent);
 
     boolean logout(Long userId, String deviceId);
 
     boolean changePassword(Login login);
 
     User findUserByTelNumberAndPassword(String telNumber, String pwd);
+
+    ClientToken refreshToken(User user, String deviceId, String userAgent);
 }

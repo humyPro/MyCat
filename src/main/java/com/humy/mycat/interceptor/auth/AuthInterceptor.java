@@ -77,24 +77,7 @@ public class AuthInterceptor implements HandlerInterceptor {
 
         if (flag) {
             //inject user
-            HandlerMethod method = (HandlerMethod) handler;
-            MethodParameter[] ps = method.getMethodParameters();
-            if (ps != null && ps.length != 0) {
-                for (MethodParameter p : ps) {
-                    Class<?> type = p.getParameterType();
-                    if (type.isAssignableFrom(User.class)) {
-                        CurrentUser currentUser = p.getParameterAnnotation(CurrentUser.class);
-                        if (currentUser == null) {
-                            throw new AnnotationTypeMismatchException(method.getMethod(), "null");
-                        }
-                        Long userId = token.getUserId();
-                        if (userId == null) continue;
-                        User byId = userService.getUserById(userId);
-                        request.setAttribute(currentUser.value(), byId);
-                    }
-
-                }
-            }
+            permission(request, response, handler, token);
             return true;
         }
 
@@ -110,5 +93,27 @@ public class AuthInterceptor implements HandlerInterceptor {
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
 
+    }
+
+    private void permission(HttpServletRequest request, HttpServletResponse response, Object handler, Token token) throws Exception {
+        if (!(handler instanceof HandlerMethod)) return;
+        HandlerMethod method = (HandlerMethod) handler;
+        MethodParameter[] ps = method.getMethodParameters();
+        if (ps != null && ps.length != 0) {
+            for (MethodParameter p : ps) {
+                Class<?> type = p.getParameterType();
+                if (type.isAssignableFrom(User.class)) {
+                    CurrentUser currentUser = p.getParameterAnnotation(CurrentUser.class);
+                    if (currentUser == null) {
+                        throw new AnnotationTypeMismatchException(method.getMethod(), " - not found");
+                    }
+                    Long userId = token.getUserId();
+                    if (userId == null) continue;
+                    User byId = userService.getUserById(userId);
+                    request.setAttribute(currentUser.value(), byId);
+                }
+
+            }
+        }
     }
 }

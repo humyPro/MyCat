@@ -20,7 +20,6 @@ public class MyTest {
 
     @Test
     public void f1() {
-        X.f1();
         Cat cat = new Cat();
         cat.setBirthDay(LocalDateTime.now().minus(2, ChronoUnit.MONTHS).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
         Age age = cat.getAge();
@@ -29,7 +28,6 @@ public class MyTest {
 
         long l = LocalDateTime.now().minus(6, ChronoUnit.MONTHS).minus(1, ChronoUnit.YEARS).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
         System.out.println(l);
-
 
     }
 
@@ -40,7 +38,9 @@ public class MyTest {
 
     @Test
     public void f2() throws IOException {
-        this.<String>f111("1111");
+        X x = new X() {
+        };
+        x.f1();
     }
 
     public <T> void f111(T a) {
@@ -63,7 +63,5 @@ public class MyTest {
             }
         }
         System.out.println(list);
-
     }
-
 }

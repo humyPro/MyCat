@@ -7,6 +7,8 @@ package com.humy.mycat;
  */
 public abstract class X {
 
-    public static void f1() {
+    public void f1() {
+        System.out.println("success");
     }
+
 }

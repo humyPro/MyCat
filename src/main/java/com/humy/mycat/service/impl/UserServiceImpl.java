@@ -67,9 +67,8 @@ public class UserServiceImpl implements UserService {
      * @return token
      */
     @Override
-    public ClientToken login(User user, Login login) {
+    public ClientToken login(User user, String agent) {
         Objects.requireNonNull(user);
-        Objects.requireNonNull(login);
         long val = System.currentTimeMillis();
         try {
             boolean lock = redis.lock(RedisUtil.TOKEN_LOCK_PREFIX, String.valueOf(user.getId()), String.valueOf(val));
@@ -81,50 +80,28 @@ public class UserServiceImpl implements UserService {
             String uuid = UUID.randomUUID().toString();
             if (oldToken != null) {
                 //其他设备登录过
-                List<Device> devices = oldToken.getDevices();
-                devices = devices == null ? new LinkedList<>() : devices;
-                if (devices.size() > appConfig.getMaxDeviceNum()) {
-                    //如果超过了最大的设备数，是删除之前所有的设备还是删除登陆最早的设备呢？
-                    devices = new LinkedList<>();
-                }
-                //没有达到最多设备的限制
-                //重新生成一台设备
-                Device device = new Device();
-                device.setDeviceId(uuid);
-                device.setAgent(login.getUserAgent());
-                device.setLoginTime(now);
-                devices.add(device);
-                oldToken.setDevices(devices);
-                boolean ok = redis.setToken(oldToken);
+                Token token = this.logined(oldToken, agent, uuid);
+                boolean ok = redis.setToken(token);
                 if (ok) {
                     ClientToken clientToken = new ClientToken();
                     clientToken.setLoginTime(now);
                     clientToken.setUuid(uuid);
-                    clientToken.setToken(oldToken.getTokenStr());
+                    clientToken.setToken(token.getTokenStr());
                     return clientToken;
                 } else {
                     return null;
                 }
-            }
-            //第一次登陆
-            String tokenStr = Jwt.createJWT(user.getId());
-            Device device = new Device();
-            device.setDeviceId(uuid);
-            device.setAgent(login.getUserAgent());
-            device.setLoginTime(now);
-            ArrayList<Device> devices = new ArrayList<>(1);
-            devices.add(device);
-            Token token = new Token();
-            token.setDevices(devices);
-            token.setTokenStr(tokenStr);
-            token.setUserId(user.getId());
-            boolean ok = redis.setToken(token);
-            if (ok) {
-                ClientToken clientToken = new ClientToken();
-                clientToken.setLoginTime(now);
-                clientToken.setUuid(uuid);
-                clientToken.setToken(tokenStr);
-                return clientToken;
+            } else {
+                //第一次登陆
+                Token token = this.firstLogin(user, agent, uuid);
+                boolean ok = redis.setToken(token);
+                if (ok) {
+                    ClientToken clientToken = new ClientToken();
+                    clientToken.setLoginTime(now);
+                    clientToken.setUuid(uuid);
+                    clientToken.setToken(token.getTokenStr());
+                    return clientToken;
+                }
             }
             return null;
         } finally {
@@ -176,7 +153,73 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public ClientToken refreshToken(User user, String deviceId, String userAgent) {
+        long now = System.currentTimeMillis();
+        String nowStr = String.valueOf(now);
+        try {
+            boolean lock = redis.lock(RedisUtil.TOKEN_LOCK_PREFIX, String.valueOf(user.getId()), nowStr);
+            if (!lock) {
+                return null;
+            }
+            Token oldToken = redis.getToken(user.getId());
+            List<Device> devices = oldToken.getDevices();
+            devices.removeIf(device -> device.getDeviceId().equals(deviceId));
+            oldToken.setDevices(devices);
+            String uuid = UUID.randomUUID().toString();
+            Token token = this.logined(oldToken, userAgent, uuid);
+            boolean ok = redis.setToken(token);
+            if (ok) {
+                ClientToken clientToken = new ClientToken();
+                clientToken.setLoginTime(now);
+                clientToken.setUuid(uuid);
+                clientToken.setToken(token.getTokenStr());
+                return clientToken;
+            }
+        } finally {
+            redis.unlock(RedisUtil.TOKEN_LOCK_PREFIX, String.valueOf(user.getId()), nowStr);
+        }
+
+        return null;
+    }
+
+    @Override
     public User findUserByTelNumberAndPassword(String telNumber, String pwd) {
         return userRepository.findUserByTelNumberAndPassword(telNumber, pwd);
+    }
+
+    private Token firstLogin(User user, String agent, String uuid) {
+        Long now = System.currentTimeMillis();
+        String tokenStr = Jwt.createJWT(user.getId());
+        Device device = new Device();
+        device.setDeviceId(uuid);
+        device.setAgent(agent);
+        device.setLoginTime(now);
+        ArrayList<Device> devices = new ArrayList<>(1);
+        devices.add(device);
+        Token token = new Token();
+        token.setDevices(devices);
+        token.setTokenStr(tokenStr);
+        token.setUserId(user.getId());
+        return token;
+    }
+
+    private Token logined(Token oldToken, String agent, String uuid) {
+        //其他设备登录过
+        List<Device> devices = oldToken.getDevices();
+        devices = devices == null ? new LinkedList<>() : devices;
+        if (devices.size() > appConfig.getMaxDeviceNum()) {
+            //如果超过了最大的设备数，是删除之前所有的设备还是删除登陆最早的设备呢？
+            devices = new LinkedList<>();
+        }
+        //没有达到最多设备的限制
+        //重新生成一台设备
+        Long now = System.currentTimeMillis();
+        Device device = new Device();
+        device.setDeviceId(uuid);
+        device.setAgent(agent);
+        device.setLoginTime(now);
+        devices.add(device);
+        oldToken.setDevices(devices);
+        return oldToken;
     }
 }
