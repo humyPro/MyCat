@@ -7,7 +7,7 @@ import com.humy.mycat.dto.in.Login;
 import com.humy.mycat.dto.out.Result;
 import com.humy.mycat.entity.User;
 import com.humy.mycat.service.UserService;
-import com.humy.mycat.vo.ClientToken;
+import com.humy.mycat.dto.vo.ClientToken;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.MarkerFactory;
@@ -77,7 +77,7 @@ public class UserController {
     @DeleteMapping("logout")
     public Result<Boolean> logout(@ApiIgnore @CurrentUser User user, @ApiIgnore @RequestHeader(Header.DEVICE_ID) String deviceId) {
         if (user == null) {
-            return Result.failed(StringUtils.EMPTY);
+            return Result.badRequest(StringUtils.EMPTY);
         }
         boolean ok = userService.logout(user.getId(), deviceId);
         return Result.success(ok);
@@ -86,16 +86,16 @@ public class UserController {
     @PutMapping("pwd")
     public Result<Boolean> changePassword(@RequestBody Login login) {
         if (login.getUserId() == null || login.getPassword() == null || login.getNewPassword() == null) {
-            return Result.failed(StringUtils.EMPTY);
+            return Result.badRequest(StringUtils.EMPTY);
         }
         boolean ok = userService.changePassword(login);
         return Result.success(ok);
     }
 
     @GetMapping("refresh")
-    public Result<ClientToken> refreshToken(@ApiIgnore @CurrentUser("refreshToken") User user, HttpServletRequest request) {
+    public Result<ClientToken> refreshToken(@ApiIgnore @CurrentUser User user, HttpServletRequest request) {
         if (user == null) {
-            return Result.unauthorized("");
+            return Result.unauthorized(StringUtils.EMPTY);
         }
         String userAgent = request.getHeader(Header.USER_AGENT);
         String deviceId = request.getHeader(Header.DEVICE_ID);

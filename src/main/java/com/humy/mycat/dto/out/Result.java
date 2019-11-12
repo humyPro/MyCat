@@ -27,22 +27,22 @@ public class Result<T> {
     private T data;
 
     public static <T> Result<T> success(T data) {
-        return getInstance(SUCCESS, data, null);
+        return newInstance(SUCCESS, data, null);
     }
 
     public static <T> Result<T> serverError() {
-        return getInstance(SERVER_ERROR, null, null);
+        return newInstance(SERVER_ERROR, null, null);
     }
 
-    public static <T> Result<T> failed(String msg) {
-        return getInstance(BAD_REQUEST, null, msg);
+    public static <T> Result<T> badRequest(String msg) {
+        return newInstance(BAD_REQUEST, null, msg);
     }
 
     public static <T> Result<T> unauthorized(String msg) {
-        return getInstance(UNAUTHORIZED, null, null);
+        return newInstance(UNAUTHORIZED, null, null);
     }
 
-    public static <T> Result<T> getInstance(int code, T data, String msg) {
+    public static <T> Result<T> newInstance(int code, T data, String msg) {
         Result<T> result = new Result<>();
         result.setCode(code);
         result.setData(data);

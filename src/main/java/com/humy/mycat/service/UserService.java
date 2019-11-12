@@ -2,7 +2,7 @@ package com.humy.mycat.service;
 
 import com.humy.mycat.dto.in.Login;
 import com.humy.mycat.entity.User;
-import com.humy.mycat.vo.ClientToken;
+import com.humy.mycat.dto.vo.ClientToken;
 
 /**
  * @Author: Milo Hu

@@ -1,7 +1,7 @@
 package com.humy.mycat.util;
 
 import com.alibaba.fastjson.JSON;
-import com.humy.mycat.vo.Token;
+import com.humy.mycat.dto.vo.Token;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.redis.core.StringRedisTemplate;

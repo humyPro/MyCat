@@ -1,6 +1,6 @@
 package com.humy.mycat.util;
 
-import com.humy.mycat.vo.Age;
+import com.humy.mycat.dto.vo.Age;
 
 import java.time.Instant;
 import java.time.LocalDate;

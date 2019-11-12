@@ -1,7 +1,7 @@
 package com.humy.mycat.entity;
 
 import com.humy.mycat.util.CommonUtil;
-import com.humy.mycat.vo.Age;
+import com.humy.mycat.dto.vo.Age;
 import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;

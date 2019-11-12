@@ -1,4 +1,4 @@
-package com.humy.mycat.vo;
+package com.humy.mycat.dto.vo;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

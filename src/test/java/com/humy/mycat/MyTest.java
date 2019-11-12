@@ -1,7 +1,7 @@
 package com.humy.mycat;
 
 import com.humy.mycat.entity.Cat;
-import com.humy.mycat.vo.Age;
+import com.humy.mycat.dto.vo.Age;
 import org.junit.Test;
 
 import java.io.IOException;

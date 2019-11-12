@@ -68,11 +68,11 @@ public class CatController {
     @PutMapping()
     public Result<Cat> updateCat(@RequestBody Cat cat) {
         if (cat == null || cat.getId() == null) {
-            return Result.failed("");
+            return Result.badRequest("");
         }
         Cat rCat = catService.updateCat(cat);
         if (rCat == null) {
-            return Result.failed("更新失败");
+            return Result.badRequest("更新失败");
         }
         return Result.success(rCat);
     }
