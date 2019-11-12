@@ -1,9 +1,9 @@
 package com.humy.mycat.controller;
 
 import com.humy.mycat.annotation.CurrentUser;
+import com.humy.mycat.annotation.Logging;
 import com.humy.mycat.constant.Header;
 import com.humy.mycat.dto.in.Login;
-import com.humy.mycat.dto.in.Logout;
 import com.humy.mycat.dto.out.Result;
 import com.humy.mycat.entity.User;
 import com.humy.mycat.service.UserService;
@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -31,6 +32,7 @@ import javax.servlet.http.HttpServletRequest;
 @RestController
 @RequestMapping("/user")
 @Slf4j
+@Logging
 public class UserController {
 
     private static final String EMPTY_ACCOUNT_PWD = "The account number or password is empty";
@@ -41,7 +43,7 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping()
+    @PostMapping
     public Result<User> addUser(@RequestBody User user) {
         User saved = userService.addUser(user);
         return Result.success(saved);
@@ -73,16 +75,16 @@ public class UserController {
     }
 
     @DeleteMapping("logout")
-    public Result<Boolean> logout(@RequestBody Logout logout, @RequestHeader(Header.DEVICE_ID) String deviceId) {
-        if (logout.getUserId() == null) {
+    public Result<Boolean> logout(@ApiIgnore @CurrentUser User user, @ApiIgnore @RequestHeader(Header.DEVICE_ID) String deviceId) {
+        if (user == null) {
             return Result.failed(StringUtils.EMPTY);
         }
-        boolean ok = userService.logout(logout.getUserId(), deviceId);
+        boolean ok = userService.logout(user.getId(), deviceId);
         return Result.success(ok);
     }
 
     @PutMapping("pwd")
-    public Result<Boolean> changePassword(@RequestBody Login login, @RequestHeader(Header.DEVICE_ID) String deviceId) {
+    public Result<Boolean> changePassword(@RequestBody Login login) {
         if (login.getUserId() == null || login.getPassword() == null || login.getNewPassword() == null) {
             return Result.failed(StringUtils.EMPTY);
         }
@@ -91,7 +93,7 @@ public class UserController {
     }
 
     @GetMapping("refresh")
-    public Result<ClientToken> refreshToken(@CurrentUser("refreshToken") User user, HttpServletRequest request) {
+    public Result<ClientToken> refreshToken(@ApiIgnore @CurrentUser("refreshToken") User user, HttpServletRequest request) {
         if (user == null) {
             return Result.unauthorized("");
         }

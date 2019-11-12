@@ -11,6 +11,10 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.stereotype.Component;
 
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import java.util.LinkedList;
+
 /**
  * @Author: Milo Hu
  * @Date: 11/1/2019 14:19
@@ -45,12 +49,21 @@ public class WebLogAspect {
     public Object LoggerAnnotationAroundLog(ProceedingJoinPoint point) throws Throwable {
         String name = point.getSignature().toString();
         Object object = null;
+        Object[] args = point.getArgs();
+        LinkedList<Object> ps = new LinkedList<>();
+        if (args != null) {
+            for (Object arg : args) {
+                if (!(arg instanceof ServletRequest || arg instanceof ServletResponse)) {
+                    ps.add(arg);
+                }
+            }
+        }
         try {
             object = point.proceed();
-            log.info("\r\n{\"success\":{}}", new LogValue(name, point.getArgs(), object));
+            log.info("\r\n{\"success\":{}}", new LogValue(name, ps, object));
             return object;
         } catch (Throwable throwable) {
-            log.error("\r\n{\"error\":{}}", new LogValue(name, point.getArgs(), object), throwable);
+            log.error("\r\n{\"error\":{}}", new LogValue(name, ps, object), throwable);
             throw throwable;
         }
     }
