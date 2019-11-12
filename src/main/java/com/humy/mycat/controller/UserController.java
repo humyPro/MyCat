@@ -63,7 +63,7 @@ public class UserController {
         login.setUserAgent(userAgent);
         User user = userService.findUserByTelNumberAndPassword(login.getTelNumber(), login.getPassword());
         if (user == null) {
-            log.info(MarkerFactory.getMarker("loginInfo"), "longin failed:{}", login);
+            log.info(MarkerFactory.getMarker("loginInfo"), "login failed:{}", login);
         }
         ClientToken token = userService.login(user, userAgent);
         if (token == null) {

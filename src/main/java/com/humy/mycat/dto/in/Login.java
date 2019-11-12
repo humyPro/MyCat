@@ -1,5 +1,6 @@
 package com.humy.mycat.dto.in;
 
+import com.alibaba.fastjson.JSON;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -24,4 +25,8 @@ public class Login {
 
     private String userAgent;
 
+    @Override
+    public String toString() {
+        return JSON.toJSONString(this);
+    }
 }
