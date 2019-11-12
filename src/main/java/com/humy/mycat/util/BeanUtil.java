@@ -2,6 +2,7 @@ package com.humy.mycat.util;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapperImpl;
+import org.springframework.context.annotation.Bean;
 
 import java.beans.PropertyDescriptor;
 import java.util.HashSet;
@@ -29,6 +30,10 @@ public class BeanUtil {
             }
         }
         return set.toArray(new String[0]);
+    }
+
+    private BeanUtil(){
+        throw new RuntimeException("Cannot get an instance of this class");
     }
 
 }

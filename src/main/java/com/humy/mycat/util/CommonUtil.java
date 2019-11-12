@@ -24,4 +24,8 @@ public class CommonUtil {
         return new Age(between.getYears(), between.getMonths());
     }
 
+    private CommonUtil(){
+        throw new RuntimeException("Cannot get an instance of this class");
+    }
+
 }
